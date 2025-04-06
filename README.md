@@ -1,13 +1,13 @@
 # Proiect Testare Unitară în JavaScript - Prima Parte (1/3)
 
 ## 1. Introducere
-Testarea unitară este o etapă esențială în procesul de dezvoltare software, având ca scop verificarea corectitudinii fiecărei componente izolate din cod. 
+- Testarea unitară este o etapă esențială în procesul de dezvoltare software, având ca scop verificarea comportamentului izolat al fiecărei componente din cod. 
 
-🔧 Funcția `removeUserFromConversations` este responsabilă de gestionarea eliminării unui utilizator din toate conversațiile sale, având diverse ramificații logice în funcție de opțiunile primite ca parametru. În continuare, prezentăm o analiză a tehnologiilor, conceptelor și resurselor relevante pentru testarea unitară a acestei funcții. Având în vedere că funcția are logică ramificată (schimbare de creator, ștergere conversații, tratament erori), testarea ei riguroasă asigură robustețea și consistența aplicației în scenarii reale de utilizare.
+- Funcția `removeUserFromConversations` este responsabilă de gestionarea eliminării unui utilizator din toate conversațiile sale, având diverse ramificații logice în funcție de opțiunile primite ca parametru. În continuare, prezentăm o analiză a tehnologiilor, conceptelor și resurselor relevante pentru testarea unitară a acestei funcții. Având în vedere că funcția are logică ramificată (schimbare de creator, ștergere conversații, tratare a erorilor), testarea ei riguroasă asigură robustețea și consistența aplicației în scenarii reale de utilizare.
 
 ## 2. Definiții esențiale
 
-- **Testare unitară**: procesul de verificare a celor mai mici unități testabile dintr-o aplicație (funcții, metode) pentru a garanta că funcționează conform specificațiilor.
+- **Testare unitară**: procesul de verificare a celor mai mici unități ce pot fi testate dintr-o aplicație (funcții, metode) pentru a garanta că funcționează conform specificațiilor.
 - **Mocking**: tehnică prin care componente externe sunt simulate (ex. baze de date, fișiere, rețele).
 - **Coverage**: măsură a proporției de cod sursă acoperită de teste.
 
@@ -24,7 +24,7 @@ Testarea unitară este o etapă esențială în procesul de dezvoltare software,
 
 ## 4. Analiza Framework-urilor de Testare
 
-| Criteriu         | ✅ Jest                 | ⚙️ Mocha               | 📘 Jasmine              |
+| Criteriu         | Jest                 | Mocha               | Jasmine              |
 |------------------|------------------------|------------------------|-------------------------|
 | **Popularitate** | Foarte popular (Facebook, Meta) | Popular – folosit în multe proiecte open-source | Mai puțin popular        |
 | **Configurare**  | Minimală – funcționează out-of-the-box cu zero configurare | Medie – necesită configurare manuală pentru assert/mock   | Medie – include multe funcții dar poate deveni complexă |
@@ -36,7 +36,7 @@ Testarea unitară este o etapă esențială în procesul de dezvoltare software,
 
 ## 5. Analiza aplicațiilor existente
 
-| Framework       | ✅ Avantaje                                               | ⚠️ Dezavantaje                                               |
+| Framework       | Avantaje                                               | Dezavantaje                                               |
 |------------------|----------------------------------------------------------|---------------------------------------------------------------|
 | **Jest**         | Setup rapid, configurare minimă, mocking și snapshot inclus | Poate fi mai lent pe proiecte mari, consumă mai multă memorie                           |
 | **Mocha + Chai** | Foarte flexibil, ușor de integrat cu alte librării       | Necesită setup suplimentar pentru mocking și coverage        |
@@ -50,3 +50,50 @@ Testarea unitară este o etapă esențială în procesul de dezvoltare software,
 - 🔗 [Software Engineering Fundamentals: Software Testing with Jest](https://www.researchgate.net/publication/389847783_Software_Engineering_Fundamentals_Software_Testing_with_Jest)
 
 ---
+
+## 7. Pagini web utile
+
+- 🔗 [Comparing modern JS testing frameworks](https://blog.seancoughlin.me/comparing-modern-javascript-testing-frameworks-jest-mocha-and-vitest)  
+- 🔗 [Jest vs Mocha – BrowserStack](https://www.browserstack.com/guide/jest-vs-mocha)  
+- 🔗 [Daily Frontend: JS Testing Frameworks](https://thedailyfrontend.com/javascript-testing-frameworks-a-comparative-analysis/)
+
+---
+
+## 8. Setup de bază pentru testare
+
+1. Inițializare proiect node:
+   ```bash
+   npm init -y
+   ```
+
+2. Instalare module necesare:
+   ```bash
+   npm install jest mongodb-memory-server @types/jest
+   ```
+
+3. Configurare Jest în fișierul `package.json`:
+   ```json
+   {
+     "name": "Aplicatie_tss",
+     "version": "1.0.0",
+     "scripts": {
+       "test": "jest"
+     },
+     "jest": {
+       "verbose": true,
+       "testEnvironment": "node",
+       "clearMocks": true,
+       "moduleFileExtensions": ["js", "json"],
+       "testMatch": ["**/tests/**/*.test.js", "**/?(*.)+(spec|test).js"],
+       "collectCoverage": true,
+       "coverageDirectory": "coverage",
+       "coveragePathIgnorePatterns": ["/node_modules/", "/tests/"]
+     }
+   }
+   ```
+
+---
+
+## 9. Concluzie
+
+Testarea unitară a funcției `removeUserFromConversations` presupune acoperirea mai multor scenarii posibile: schimbarea creatorului, eliminarea conversațiilor goale, logging al erorilor. Prin utilizarea framework-urilor moderne precum Jest, procesul devine eficient, iar integrarea cu instrumente de CI/CD asigură o testare automatizată și continuă.
