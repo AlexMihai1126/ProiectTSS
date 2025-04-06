@@ -11,7 +11,7 @@ Testarea unitară este o etapă esențială în procesul de dezvoltare software,
 - **Mocking**: tehnică prin care componente externe sunt simulate (ex. baze de date, fișiere, rețele).
 - **Coverage**: măsură a proporției de cod sursă acoperită de teste.
 
-## 6. Servicii și resurse disponibile
+## 3. Servicii și resurse disponibile
 
 | Serviciu/Resursă          | Descriere                                                                 |
 |---------------------------|--------------------------------------------------------------------------|
