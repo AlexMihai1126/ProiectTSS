@@ -24,6 +24,137 @@ beforeEach(async () => {
   await mongoose.connection.db.dropDatabase();
 });
 
+
+async function createTestConversation({ members, creator, groupName = "Test Group" }) {
+    return await Conversation.create({
+      members,
+      creator: creator || members[0], // daca nu se speccifica creatorul -> primul membru devine creator
+      groupName,
+    });
+}
+
 test('conectare la baza de date MongoDB in memorie ', () => {
-    expect(mongoose.connection.readyState).toBe(1);
+  expect(mongoose.connection.readyState).toBe(1);
+});
+
+describe('Basic functionality', () => {
+  // test 1
+  // adauga 2 utilizatori intr-o conversatie -> sterge unul -> verifica daca a ramas doar un user
+  test('elimina utilizatorul din conversatii', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const anotherUserId = new mongoose.Types.ObjectId();
+  
+    const conversation = await createTestConversation({
+      members: [userId, anotherUserId],
+      creator: anotherUserId,
+    });
+  
+    await removeUserFromConversations(userId);
+    const updatedConversation = await Conversation.findById(conversation._id);
+  
+    expect(updatedConversation.members.some(member => member.equals(userId))).toBe(false);
+    expect(updatedConversation.members.length).toBe(1);
   });
+
+    
+});
+
+describe('Creator reassignment', () => {
+  // test 4
+  // daca userul sters era creator si mai sunt membrii -> primul membru devine creator
+  test('realocare creator cand utilizatorul era creator si raman membri (selecteaza primul)', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const otherUser1 = new mongoose.Types.ObjectId();
+    const otherUser2 = new mongoose.Types.ObjectId();
+
+    const conversation = await createTestConversation({
+      members: [userId, otherUser1, otherUser2],
+      creator: userId,
+    });
+
+    await removeUserFromConversations(userId, { newCreatorSelection: "first" });
+    const updatedConversation = await Conversation.findById(conversation._id);
+    
+    expect(updatedConversation.creator.equals(userId)).toBe(false);
+    expect(updatedConversation.creator.equals(otherUser1)).toBe(true);
+  });
+
+  // test 5
+  // noul creator este ales random din cei ramasi
+  test('selecteaza aleatoriu noul creator cand utilizatorul era creator', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const otherUser1 = new mongoose.Types.ObjectId();
+    const otherUser2 = new mongoose.Types.ObjectId();
+
+    const conversation = await createTestConversation({
+      members: [userId, otherUser1, otherUser2],
+      creator: userId,
+    });
+
+    await removeUserFromConversations(userId, { newCreatorSelection: "random" });
+    const updatedConversation = await Conversation.findById(conversation._id);
+    
+    expect(updatedConversation.creator.equals(userId)).toBe(false);
+    expect(
+      updatedConversation.creator.equals(otherUser1) || 
+      updatedConversation.creator.equals(otherUser2)
+    ).toBe(true);
+  });
+
+  
+});
+
+describe('Empty conversation handling', () => {
+  // test 7
+  // userul era singur -> dupa stergere conversatia este stearsa din db
+  test('sterge conversatia cand nu mai raman membri si removeEmptyConversations e true', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const conversation = await createTestConversation({
+      members: [userId],
+      creator: userId,
+    });
+
+    await removeUserFromConversations(userId, { removeEmptyConversations: true });
+    const deletedConversation = await Conversation.findById(conversation._id);
+    
+    expect(deletedConversation).toBeNull();
+  });
+
+});
+
+
+describe('Edge cases', () => {
+  // test 9
+  // userul este creator, dar nu apare in lista de membrii -> se realoca alt creator
+  test('gestionare cand utilizatorul este creator dar nu este membru', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const otherUser = new mongoose.Types.ObjectId();
+
+    const conversation = await createTestConversation({
+      members: [otherUser],
+      creator: userId,
+    });
+
+    await removeUserFromConversations(userId);
+    const updatedConversation = await Conversation.findById(conversation._id);
+    
+    expect(updatedConversation.creator.equals(userId)).toBe(false);
+    expect(updatedConversation.creator.equals(otherUser)).toBe(true);
+  });
+
+  // test 10
+  // nu trebuie sa dea erori si trebuie sa se logheze cu succes
+  test('gestionare cand utilizatorul nu este in nicio conversatie', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const mockLogger = {
+      log: jest.fn(),
+      error: jest.fn()
+    };
+
+    await removeUserFromConversations(userId, {}, mockLogger);
+    
+    expect(mockLogger.log).toHaveBeenCalledWith("User removed from conversations successfully");
+    expect(mockLogger.error).not.toHaveBeenCalled();
+  });
+
+});

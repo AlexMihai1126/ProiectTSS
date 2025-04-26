@@ -71,18 +71,28 @@ async function removeUserMessages(userId) {
 
 async function removeUserFromConversations(userId, options = { removeEmptyConversations: true, newCreatorSelection: "random" }, logger = console) {
     try {
-        const conversations = await Conversation.find({ members: userId });
+        const conversations = await Conversation.find({ 
+            $or: [
+                { members: userId },
+                { creator: userId }
+            ]
+        });
 
         for (const conversation of conversations) {
-            conversation.members = conversation.members.filter(member => !member.equals(userId));
+            let userWasMember = conversation.members.some(member => member.equals(userId));
+            let userWasCreator = conversation.creator && conversation.creator.equals(userId);
 
-            if (conversation.creator.equals(userId)) {
+            // Remove user from members
+            if (userWasMember) {
+                conversation.members = conversation.members.filter(member => !member.equals(userId));
+            }
+
+            // If user was creator
+            if (userWasCreator) {
                 if (conversation.members.length > 0) {
+                    // Assign new creator
                     let newCreator;
-                    if (options.newCreatorSelection === "random") {
-                        const newCreatorIndex = Math.floor(Math.random() * conversation.members.length);
-                        newCreator = conversation.members[newCreatorIndex];
-                    } else if (options.newCreatorSelection === "first") {
+                    if (options.newCreatorSelection === "first") {
                         newCreator = conversation.members[0];
                     } else {
                         const newCreatorIndex = Math.floor(Math.random() * conversation.members.length);
@@ -90,15 +100,24 @@ async function removeUserFromConversations(userId, options = { removeEmptyConver
                     }
                     conversation.creator = newCreator;
                 } else {
+                    // No members left → must delete conversation
+                    await Conversation.deleteOne({ _id: conversation._id });
+                    logger.log(`Conversation ${conversation._id} removed because no members left`);
+                    continue; // Skip saving
+                }
+            } else {
+                // If user was not creator but now no members left, and creator still exists
+                if (conversation.members.length === 0) {
+                    // Optional: depending on app logic, you might delete empty convos even if creator remains
                     if (options.removeEmptyConversations) {
-                        await conversation.remove();
+                        await Conversation.deleteOne({ _id: conversation._id });
                         logger.log(`Conversation ${conversation._id} removed because no members left`);
-                        continue;
-                    } else {
-                        conversation.creator = null;
+                        continue; // Skip saving
                     }
+                    // Otherwise, save conversation with 0 members and a creator
                 }
             }
+
             await conversation.save();
             logger.log(`Updated conversation ${conversation._id}`);
         }
@@ -108,6 +127,7 @@ async function removeUserFromConversations(userId, options = { removeEmptyConver
         logger.error("Error removing user from conversations:", error);
     }
 }
+
 
 async function removeUserProfilePicture(pfpId) {
     try {
@@ -151,4 +171,8 @@ async function cleanupUser(userId) {
     }
 }
 
-module.exports = { cleanupUser };
+module.exports = {
+    cleanupUser,
+    removeUserFromConversations,
+  };
+  
