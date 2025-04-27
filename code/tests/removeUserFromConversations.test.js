@@ -56,7 +56,54 @@ describe('Basic functionality', () => {
     expect(updatedConversation.members.length).toBe(1);
   });
 
+  // test 2
+  test('elimina utilizatorul conectat din toate conversatiile', async () => {
+    // un user este in 3 conversatii diferite -> sterge userull din toate -> verifica ca nu mai exista niciuna
+    const userId = new mongoose.Types.ObjectId();
+    const otherUser1 = new mongoose.Types.ObjectId();
+    const otherUser2 = new mongoose.Types.ObjectId();
+
+    const conv1 = await createTestConversation({
+      members: [userId, otherUser1],
+      creator: otherUser1,
+    });
+    const conv2 = await createTestConversation({
+      members: [userId, otherUser2],
+      creator: userId,
+    });
+    const conv3 = await createTestConversation({
+      members: [userId, otherUser1, otherUser2],
+      creator: otherUser2,
+    });
+
+    await removeUserFromConversations(userId);
+
+    const updatedConv1 = await Conversation.findById(conv1._id);
+    const updatedConv2 = await Conversation.findById(conv2._id);
+    const updatedConv3 = await Conversation.findById(conv3._id);
+
+    expect(updatedConv1.members.some(m => m.equals(userId))).toBe(false);
+    expect(updatedConv2.members.some(m => m.equals(userId))).toBe(false);
+    expect(updatedConv3.members.some(m => m.equals(userId))).toBe(false);
+  });
+
+  // test 3
+  // conversatie cu 11 membriii -> sterge unul -> verifica ca au ramas 10
+  test('gestionare conversatie cu multi membri', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const otherUsers = Array(10).fill().map(() => new mongoose.Types.ObjectId());
     
+    const conversation = await createTestConversation({
+      members: [userId, ...otherUsers],
+      creator: otherUsers[0],
+    });
+
+    await removeUserFromConversations(userId);
+    const updatedConversation = await Conversation.findById(conversation._id);
+    
+    expect(updatedConversation.members).toHaveLength(10);
+    expect(updatedConversation.members.some(m => m.equals(userId))).toBe(false);
+  }); 
 });
 
 describe('Creator reassignment', () => {
@@ -100,7 +147,28 @@ describe('Creator reassignment', () => {
       updatedConversation.creator.equals(otherUser2)
     ).toBe(true);
   });
+ 
+  // test 6
+  // daca nu specificam metoda (random sau first), default este random
+  test('foloseste selectare aleatorie in mod implicit', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const otherUser1 = new mongoose.Types.ObjectId();
+    const otherUser2 = new mongoose.Types.ObjectId();
 
+    const conversation = await createTestConversation({
+      members: [userId, otherUser1, otherUser2],
+      creator: userId,
+    });
+
+    await removeUserFromConversations(userId); // No options specified
+    const updatedConversation = await Conversation.findById(conversation._id);
+    
+    expect(updatedConversation.creator.equals(userId)).toBe(false);
+    expect(
+      updatedConversation.creator.equals(otherUser1) || 
+      updatedConversation.creator.equals(otherUser2)
+    ).toBe(true);
+  });
   
 });
 
@@ -115,6 +183,21 @@ describe('Empty conversation handling', () => {
     });
 
     await removeUserFromConversations(userId, { removeEmptyConversations: true });
+    const deletedConversation = await Conversation.findById(conversation._id);
+    
+    expect(deletedConversation).toBeNull();
+  });
+ 
+  // test 8
+  // Chiar daca removeEmptyConversations e false, tot stergem conversatia (creatorul e required si nu poate exista conversatie fara membri)
+  test('sterge conversatia cand nu mai raman membri si removeEmptyConversations e false', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const conversation = await createTestConversation({
+      members: [userId],
+      creator: userId,
+    });
+
+    await removeUserFromConversations(userId, { removeEmptyConversations: false });
     const deletedConversation = await Conversation.findById(conversation._id);
     
     expect(deletedConversation).toBeNull();
@@ -157,95 +240,7 @@ describe('Edge cases', () => {
     expect(mockLogger.error).not.toHaveBeenCalled();
   });
 
-});
-
-// test 2
-test('elimina utilizatorul conectat din toate conversatiile', async () => {
-  // un user este in 3 conversatii diferite -> sterge userull din toate -> verifica ca nu mai exista niciuna
-  const userId = new mongoose.Types.ObjectId();
-  const otherUser1 = new mongoose.Types.ObjectId();
-  const otherUser2 = new mongoose.Types.ObjectId();
-
-  const conv1 = await createTestConversation({
-    members: [userId, otherUser1],
-    creator: otherUser1,
-  });
-  const conv2 = await createTestConversation({
-    members: [userId, otherUser2],
-    creator: userId,
-  });
-  const conv3 = await createTestConversation({
-    members: [userId, otherUser1, otherUser2],
-    creator: otherUser2,
-  });
-
-  await removeUserFromConversations(userId);
-
-  const updatedConv1 = await Conversation.findById(conv1._id);
-  const updatedConv2 = await Conversation.findById(conv2._id);
-  const updatedConv3 = await Conversation.findById(conv3._id);
-
-  expect(updatedConv1.members.some(m => m.equals(userId))).toBe(false);
-  expect(updatedConv2.members.some(m => m.equals(userId))).toBe(false);
-  expect(updatedConv3.members.some(m => m.equals(userId))).toBe(false);
-});
-
-// test 3
-// conversatie cu 11 membriii -> sterge unul -> verifica ca au ramas 10
-test('gestionare conversatie cu multi membri', async () => {
-  const userId = new mongoose.Types.ObjectId();
-  const otherUsers = Array(10).fill().map(() => new mongoose.Types.ObjectId());
-  
-  const conversation = await createTestConversation({
-    members: [userId, ...otherUsers],
-    creator: otherUsers[0],
-  });
-
-  await removeUserFromConversations(userId);
-  const updatedConversation = await Conversation.findById(conversation._id);
-  
-  expect(updatedConversation.members).toHaveLength(10);
-  expect(updatedConversation.members.some(m => m.equals(userId))).toBe(false);
-});
-
-// test 6
-  // daca nu specificam metoda (random sau first), default este random
-  test('foloseste selectare aleatorie in mod implicit', async () => {
-    const userId = new mongoose.Types.ObjectId();
-    const otherUser1 = new mongoose.Types.ObjectId();
-    const otherUser2 = new mongoose.Types.ObjectId();
-
-    const conversation = await createTestConversation({
-      members: [userId, otherUser1, otherUser2],
-      creator: userId,
-    });
-
-    await removeUserFromConversations(userId); // No options specified
-    const updatedConversation = await Conversation.findById(conversation._id);
-    
-    expect(updatedConversation.creator.equals(userId)).toBe(false);
-    expect(
-      updatedConversation.creator.equals(otherUser1) || 
-      updatedConversation.creator.equals(otherUser2)
-    ).toBe(true);
-  });
-
-  // test 8
-  // Chiar daca removeEmptyConversations e false, tot stergem conversatia (creatorul e required si nu poate exista conversatie fara membri)
-  test('sterge conversatia cand nu mai raman membri si removeEmptyConversations e false', async () => {
-    const userId = new mongoose.Types.ObjectId();
-    const conversation = await createTestConversation({
-      members: [userId],
-      creator: userId,
-    });
-
-    await removeUserFromConversations(userId, { removeEmptyConversations: false });
-    const deletedConversation = await Conversation.findById(conversation._id);
-    
-    expect(deletedConversation).toBeNull();
-  });
-
-  // test 11
+    // test 11
   // ID invalid ("invalid-id") si verifica ca logger.error este apelat
   test('logheaza eroare cand se ofera un id invalid', async () => {
     const mockLogger = {
@@ -257,3 +252,7 @@ test('gestionare conversatie cu multi membri', async () => {
     
     expect(mockLogger.error).toHaveBeenCalled();
   });
+});
+
+
+
