@@ -208,7 +208,7 @@ describe('Empty conversation handling', () => {
 
 describe('Edge cases', () => {
   // test 9
-  // userul este creator, dar nu apare in lista de membrii -> se realoca alt creator
+  // userul este creator, dar nu apare in lista de membri -> se realoca alt creator
   test('gestionare cand utilizatorul este creator dar nu este membru', async () => {
     const userId = new mongoose.Types.ObjectId();
     const otherUser = new mongoose.Types.ObjectId();

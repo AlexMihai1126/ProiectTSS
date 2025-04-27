@@ -1,4 +1,6 @@
-# Proiect Testare Unitară în JavaScript - Prima Parte (1/3)
+# Proiect Testare Unitară în JavaScript - Etapa 2/3
+
+# Etapa 1 (S7)
 
 ## 1. Introducere
 - Testarea unitară este o etapă esențială în procesul de dezvoltare software, având ca scop verificarea comportamentului izolat al fiecărei componente din cod. 
@@ -97,3 +99,83 @@
 ## 9. Concluzie
 
 Testarea unitară a funcției `removeUserFromConversations` presupune acoperirea mai multor scenarii posibile: schimbarea creatorului, eliminarea conversațiilor goale, logging al erorilor. Prin utilizarea framework-urilor moderne precum Jest, procesul devine eficient, iar integrarea cu instrumente de CI/CD asigură o testare automatizată și continuă.
+
+
+# Etapa 2 (S9)
+
+## Rulare teste:
+   ```bash
+   npm test
+   ```
+
+Fișierul definește o suită de teste pentru funcția `removeUserFromConversations`.
+
+---
+
+## 1. Configurare
+
+- **MongoMemoryServer**: Rularea unei instanţe MongoDB în memorie.
+- **Mongoose**: Conectare la serverul în memorie (`beforeAll` / `afterAll`) și resetarea bazei de date înainte de fiecare test (`beforeEach`).
+
+---
+
+## 2. Helper: `createTestConversation`
+
+Creează o conversaţie de test cu următoarele proprietăţi:
+- `members`: lista de membri (ObjectId).
+- `creator`: implicit primul membru din listă, dacă nu e specificat altul.
+- `groupName`: numele grupului - implicit “Test Group”.
+
+---
+
+## 3. Teste de bază
+
+1. **Conectare la baza de date**  
+   Verifică starea conexiunii Mongoose (`readyState === 1`).
+
+2. **Eliminare simplă a unui utilizator**  
+   - Pornind de la 2 membri, îl şterge pe unul şi verifică să mai fie un singur membru rămas.
+
+3. **Eliminare din toate conversaţiile**  
+   - Un utilizator prezent în 3 conversaţii; se verifică că nu mai apare în niciuna.
+
+4. **Gestionare conversație cu mulţi membri**  
+   - Într-o conversaţie cu 11 membri, la ştergerea unuia rămân 10.
+
+---
+
+## 4. Asignare creator (admin) nou
+
+5. **Opțiunea “first”**  
+   Dacă se șterge creatorul și mai rămân membri, noul creator devine primul din listă.
+
+6. **Opțiunea “random”**  
+   Dacă creatorul se șterge, se alege în mod aleatoriu un nou creator.
+
+7. **Implicit “random”**  
+   Fără opţiuni, funcția folosește "random" pentru noul creator.
+
+---
+
+## 5. Gestionare conversaţii goale
+
+8. **`removeEmptyConversations: true`**  
+   Dacă după ştergere nu mai rămân membri, întreaga conversaţie este ștearsă.
+
+9. **`removeEmptyConversations: false`**  
+   Chiar și fără specificația explicită, o conversație fără membri nu poate exista şi este ștearsă.
+
+---
+
+## 6. Edge cases
+
+10. **Creator fără apariţie în membri**  
+    Dacă acel creator nu este în listă, se alege altcineva.
+
+11. **Utilizator fără nicio conversație**  
+    Nu se generează erori; se emite “User removed from conversations successfully”.
+
+12. **ID invalid**  
+    Apelarea cu un ID invalid trebuie să emită `logger.error`.
+
+---

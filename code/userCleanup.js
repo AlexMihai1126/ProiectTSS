@@ -108,7 +108,6 @@ async function removeUserFromConversations(userId, options = { removeEmptyConver
             } else {
                 // If user was not creator but now no members left, and creator still exists
                 if (conversation.members.length === 0) {
-                    // Optional: depending on app logic, you might delete empty convos even if creator remains
                     if (options.removeEmptyConversations) {
                         await Conversation.deleteOne({ _id: conversation._id });
                         logger.log(`Conversation ${conversation._id} removed because no members left`);
