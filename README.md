@@ -1,4 +1,11 @@
-# Proiect Testare Unitară în JavaScript - Etapa 2/3
+# Proiect testare unitară în JavaScript - Etapa 2/3
+
+## Membrii echipei:
+   1) Mihai Alexandru-Mario
+   2) Ojoc Diana-Cristiana
+   3) Cîrstea Ruxandra-Gabriela
+
+---
 
 # Etapa 1 (S7)
 
@@ -70,27 +77,36 @@
 
 2. Instalare module necesare:
    ```bash
-   npm install jest mongodb-memory-server @types/jest
+   npm install jest mongodb-memory-server @types/jest mongoose uuidv4
    ```
 
 3. Configurare Jest în fișierul `package.json`:
    ```json
    {
-     "name": "Aplicatie_tss",
-     "version": "1.0.0",
+     "name": "proiect_tss",
+     // [configurație parțial omisă]
      "scripts": {
-       "test": "jest"
-     },
+         "test": "jest --runInBand"
+      },
      "jest": {
-       "verbose": true,
-       "testEnvironment": "node",
-       "clearMocks": true,
-       "moduleFileExtensions": ["js", "json"],
-       "testMatch": ["**/tests/**/*.test.js", "**/?(*.)+(spec|test).js"],
-       "collectCoverage": true,
-       "coverageDirectory": "coverage",
-       "coveragePathIgnorePatterns": ["/node_modules/", "/tests/"]
-     }
+         "verbose": true,
+         "testEnvironment": "node",
+         "clearMocks": true,
+         "moduleFileExtensions": [
+            "js",
+            "json"
+         ],
+         "testMatch": [
+            "**/tests/**/*.test.js",
+            "**/?(*.)+(spec|test).js"
+         ],
+         "collectCoverage": true,
+         "coverageDirectory": "coverage",
+         "coveragePathIgnorePatterns": [
+            "/node_modules/",
+            "/tests/"
+         ]
+      }
    }
    ```
 
@@ -98,7 +114,7 @@
 
 ## 9. Concluzie
 
-Testarea unitară a funcției `removeUserFromConversations` presupune acoperirea mai multor scenarii posibile: schimbarea creatorului, eliminarea conversațiilor goale, logging al erorilor. Prin utilizarea framework-urilor moderne precum Jest, procesul devine eficient, iar integrarea cu instrumente de CI/CD asigură o testare automatizată și continuă.
+Testarea unitară a funcției `removeUserFromConversations` presupune acoperirea mai multor scenarii posibile: schimbarea creatorului, eliminarea conversațiilor goale, logging al erorilor. Prin utilizarea framework-urilor moderne precum Jest, procesul devine eficient, iar posibilitatea integrării cu instrumente de CI/CD asigură o testare automatizată și continuă pe parcursul procesului de dezvoltare și îmbunătățire al aplicației.
 
 
 # Etapa 2 (S9)
@@ -144,7 +160,7 @@ Creează o conversaţie de test cu următoarele proprietăţi:
 
 ---
 
-## 4. Asignare creator (admin) nou
+## 4. Alegere creator (admin) nou
 
 5. **Opțiunea “first”**  
    Dacă se șterge creatorul și mai rămân membri, noul creator devine primul din listă.
@@ -157,7 +173,7 @@ Creează o conversaţie de test cu următoarele proprietăţi:
 
 ---
 
-## 5. Gestionare conversaţii goale
+## 5. Gestionare conversaţii rămase fără membri
 
 8. **`removeEmptyConversations: true`**  
    Dacă după ştergere nu mai rămân membri, întreaga conversaţie este ștearsă.

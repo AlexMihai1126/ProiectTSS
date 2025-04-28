@@ -37,7 +37,7 @@ test('conectare la baza de date MongoDB in memorie ', () => {
   expect(mongoose.connection.readyState).toBe(1);
 });
 
-describe('Basic functionality', () => {
+describe('Functii de baza', () => {
   // test 1
   // adauga 2 utilizatori intr-o conversatie -> sterge unul -> verifica daca a ramas doar un user
   test('elimina utilizatorul din conversatii', async () => {
@@ -106,7 +106,7 @@ describe('Basic functionality', () => {
   }); 
 });
 
-describe('Creator reassignment', () => {
+describe('Alegere creator (admin) nou', () => {
   // test 4
   // daca userul sters era creator si mai sunt membrii -> primul membru devine creator
   test('realocare creator cand utilizatorul era creator si raman membri (selecteaza primul)', async () => {
@@ -172,7 +172,7 @@ describe('Creator reassignment', () => {
   
 });
 
-describe('Empty conversation handling', () => {
+describe('Gestionare conversatii fara membri', () => {
   // test 7
   // userul era singur -> dupa stergere conversatia este stearsa din db
   test('sterge conversatia cand nu mai raman membri si removeEmptyConversations e true', async () => {
