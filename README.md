@@ -124,7 +124,7 @@ Testarea unitară a funcției `removeUserFromConversations` presupune acoperirea
    npm test
    ```
 
-Fișierul definește o suită de teste pentru funcția `removeUserFromConversations`.
+Fișierul definește o suită de teste pentru funcția `removeUserFromConversations`. Notă: scorul mic de coverage vine din faptul că fișierul de cod conține mai multe metode auxiliare netestate și irelevante pentru acest proiect.
 
 ---
 
