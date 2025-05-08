@@ -195,3 +195,34 @@ Creează o conversaţie de test cu următoarele proprietăţi:
     Apelarea cu un ID invalid trebuie să emită `logger.error`.
 
 ---
+
+# Etapa finală
+
+## Comparație cu alte aplicații similare
+
+Pentru a înțelege mai bine abordările existente, am analizat modul în care aplicații populare precum **WhatsApp**, **Telegram** sau **Discord** gestionează ștergerea unui utilizator dintr-un grup sau a unui admin.
+
+### Observații:
+
+- **WhatsApp**:  
+  Când un admin este șters, grupul nu este afectat structural; atribuțiile de admin pot fi transferate altui utilizator. Istoricul mesajelor rămâne intact pentru ceilalți membri.
+
+- **Telegram**:  
+  Oferă un control granular. Un admin șters își pierde doar drepturile, dar datele trimise (mesaje, media) sunt păstrate. Se pot seta permisiuni automate de auto-ștergere după un anumit timp.
+
+- **Discord**:  
+  Adminul unui server poate fi eliminat doar dacă sunt alți admini sau dacă proprietatea este transferată. Mesajele nu sunt șterse automat.
+
+---
+
+### Abordarea aplicației din proiect
+
+Prin comparație, în aplicația analizată în cadrul acestui proiect, ștergerea unui utilizator implică automat curățarea următoarelor:
+
+- **Mesaje și conversații**
+- **Conținut media asociat**
+- **Relații de prietenie**
+- **Rolul de admin**, dacă este cazul
+
+Această abordare oferă un plus de **confidențialitate** și **control al datelor**, în contrast cu soluțiile mai conservatoare din aplicațiile menționate, unde istoricul este păstrat chiar și după ștergerea contului.
+
