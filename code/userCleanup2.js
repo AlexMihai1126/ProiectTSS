@@ -1,10 +1,10 @@
 const path = require('path');
 const fs = require('fs');
-const User = require('./models/User');
-const Friend = require('./models/Friend');
-const Media = require('./models/Media');
-const Message = require('./models/Message');
-const Conversation = require('./models/Conversation');
+const User = require('../models/User');
+const Friend = require('../models/Friend');
+const Media = require('../models/Media');
+const Message = require('../models/Message');
+const Conversation = require('../models/Conversation');
 
 async function removeUserFriendships(userId) {
     if (!userId) {
