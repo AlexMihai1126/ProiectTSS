@@ -215,6 +215,29 @@ Pentru a înțelege mai bine abordările existente, am analizat modul în care a
 
 ---
 
+## Mutation testing
+
+Testarea prin mutanți este o tehnică folosită pentru a verifica calitatea testelor automate. Se realizează prin introducerea unor modificări mici (mutanți) în cod, cum ar fi schimbarea unui > în < sau înlocuirea unui true cu false. Scopul este de a vedea dacă testele detectează aceste modificări (adică eșuează când codul este greșit).
+
+Dacă testele nu eșuează, atunci mutantul „supraviețuiește” și indică faptul că testul nu acoperă bine acea logică. Așadar, testarea prin mutanți ajută la identificarea testelor slabe și la îmbunătățirea acoperirii, chiar și atunci când acoperirea liniilor de cod pare suficientă.
+
+Configurare Stryker mutation tester în fișierul `stryker.conf.js`:
+   ```js
+   /**
+ * @type {import('@stryker-mutator/api/core').StrykerOptions}
+ */
+module.exports = {
+  mutate: ["src/**/*.js"],
+  testRunner: "jest",
+  reporters: ["html", "clear-text", "progress"],
+  coverageAnalysis: "off",
+  jest: {
+    projectType: "custom",
+  },
+};
+   ```
+
+
 ### Abordarea aplicației din proiect
 
 Prin comparație, în aplicația analizată în cadrul acestui proiect, ștergerea unui utilizator implică automat curățarea următoarelor:
