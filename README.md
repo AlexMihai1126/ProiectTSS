@@ -215,6 +215,29 @@ Pentru a înțelege mai bine abordările existente, am analizat modul în care a
 
 ---
 
+## Mutation testing
+
+Testarea prin mutanți este o tehnică folosită pentru a verifica calitatea testelor automate. Se realizează prin introducerea unor modificări mici (mutanți) în cod, cum ar fi schimbarea unui > în < sau înlocuirea unui true cu false. Scopul este de a vedea dacă testele detectează aceste modificări (adică eșuează când codul este greșit).
+
+Dacă testele nu eșuează, atunci mutantul „supraviețuiește” și indică faptul că testul nu acoperă bine acea logică. Așadar, testarea prin mutanți ajută la identificarea testelor slabe și la îmbunătățirea acoperirii, chiar și atunci când acoperirea liniilor de cod pare suficientă.
+
+Configurare Stryker mutation tester în fișierul `stryker.conf.js`:
+   ```js
+   /**
+ * @type {import('@stryker-mutator/api/core').StrykerOptions}
+ */
+module.exports = {
+  mutate: ["src/**/*.js"],
+  testRunner: "jest",
+  reporters: ["html", "clear-text", "progress"],
+  coverageAnalysis: "off",
+  jest: {
+    projectType: "custom",
+  },
+};
+   ```
+
+
 ### Abordarea aplicației din proiect
 
 Prin comparație, în aplicația analizată în cadrul acestui proiect, ștergerea unui utilizator implică automat curățarea următoarelor:
@@ -226,3 +249,17 @@ Prin comparație, în aplicația analizată în cadrul acestui proiect, șterger
 
 Această abordare oferă un plus de **confidențialitate** și **control al datelor**, în contrast cu soluțiile mai conservatoare din aplicațiile menționate, unde istoricul este păstrat chiar și după ștergerea contului.
 
+
+## Comparație între cele două fisiere de testare pentru funcția removeUserFromConversations
+
+Cu ajutorul AI-ului, am generat un fișier de testare — `removeUserFromConversationsAI.test.js`— pe care l-am comparat ulterior cu varianta creată manual — `removeUserFromConversations.test.js` — de către echipa noastră, pentru a evidenția diferențele de abordare, acoperire și structură.
+
+
+| Aspect                         | Fișier inițial                                                                                                                                                                                                                            | Fișier generat cu AI                                                                                                                                                                                                                            |
+| :----------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Acoperire teste** | Mai larg, include mai multe cazuri limită specifice, testarea opțiunilor implicite și gestionarea conversațiilor goale în diverse condiții, testarea logging-ului.                                                                                                                                        | Funcționalități de bază, mai puține cazuri limită explicite, fără testarea opțiunilor implicite detaliată sau a logging-ului.                                                                                                                                                                  |                                                                                                                                                                                         |
+| **Modularitate test funcțional** | Are `createTestConversation()` cu valori implicite (utilizează valoarea creator furnizată sau primul membru din `members` ca fallback) și flexibilitate (permite specificarea numelui grupului la apelare).                                                                                                                                                                   | Are `createConversation()` simplificat (utilizează doar valoarea creator furnizată), fără opțiuni suplimentare (numele grupului este fix).                                                                                                                                                                        |
+| **Structură teste** | Organizată pe categorii: funcționalități de bază, realocare creator, edge cases etc.                                                                                                                                                     | Toate testele într-un singur `describe`, mai puțin organizate.                                                                                                                                                                        |                                                                                                                                                      |
+| **Cazuri limită (edge cases)** | ID invalid, creator care nu e membru, user fără conversații.                                                                                                                                                                     | Doar unul: creator care nu e membru.                                                                                                                                                                                                   |                                                                                                                                                                              |
+| **Variabile** | Clară și contextuală (ex: `userId`, `otherUser1`, `mockLogger`)                                                                                                                                                                         | Mai simplă și uneori mai vagă (`uid`, `target`, `creatorOnly`)                                                                                                                                                                         |     
+| **Complexitate** | Mare – ideal pentru validare completă                                                                                                                                                                        | Redusă – potrivit pentru faze inițiale ale dezvoltării sau debugging rapid                                                                                                                                                                        |                                                                                                                                                                     |
