@@ -250,7 +250,7 @@ Prin comparație, în aplicația analizată în cadrul acestui proiect, șterger
 Această abordare oferă un plus de **confidențialitate** și **control al datelor**, în contrast cu soluțiile mai conservatoare din aplicațiile menționate, unde istoricul este păstrat chiar și după ștergerea contului.
 
 
-## Compararea testelor manuale vs. autogenerate cu AI pentru
+## Compararea testelor manuale vs. autogenerate cu AI 
 
 ### Descriere generală
 
