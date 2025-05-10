@@ -250,10 +250,35 @@ Prin comparație, în aplicația analizată în cadrul acestui proiect, șterger
 Această abordare oferă un plus de **confidențialitate** și **control al datelor**, în contrast cu soluțiile mai conservatoare din aplicațiile menționate, unde istoricul este păstrat chiar și după ștergerea contului.
 
 
-## Comparație între cele două fisiere de testare pentru funcția removeUserFromConversations
+## Compararea testelor manuale vs. autogenerate cu AI pentru
+
+### Descriere generală
 
 Cu ajutorul AI-ului, am generat un fișier de testare — `removeUserFromConversationsAI.test.js`— pe care l-am comparat ulterior cu varianta creată manual — `removeUserFromConversations.test.js` — de către echipa noastră, pentru a evidenția diferențele de abordare, acoperire și structură.
 
+### Tool AI folosit
+
+- ChatGPT (model GPT-4) – folosit pentru generarea automată de teste pe baza unei descrieri funcționale a metodei.
+
+- Promptul utilizat este disponibil mai jos.
+
+### Prompt folosit în ChatGPT
+
+```bash
+   Vreau să creezi un fișier de testare pentru o funcție numită removeUserFromConversations(userId, options, logger) care elimină un user din toate conversațiile din baza de date MongoDB. Funcția se ocupă de: 1) eliminarea userului din câmpul `members` al colecției Conversation, 2) dacă userul era creator, se realocă automat alt creator, 3) dacă conversația rămâne fără membri și opțiunea removeEmptyConversations e true, se șterge din DB. Vreau să folosești Jest și MongoMemoryServer pentru testare.
+   ```
+
+### Structura fișierelor
+
+- `removeUserFromConversations.test.js` – Testele scrise manual de către echipa noastră.
+
+- `removeUserFromConversationsAI.test.js` – Testele generate automat cu ChatGPT.
+
+- `src/userCleanup.js` – Conține funcția removeUserFromConversations.
+
+- `models/Conversation.js` – Modelul Mongoose pentru conversații.
+
+### Criterii de comparație
 
 | Aspect                         | Fișier inițial                                                                                                                                                                                                                            | Fișier generat cu AI                                                                                                                                                                                                                            |
 | :----------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -263,3 +288,34 @@ Cu ajutorul AI-ului, am generat un fișier de testare — `removeUserFromConvers
 | **Cazuri limită (edge cases)** | ID invalid, creator care nu e membru, user fără conversații.                                                                                                                                                                     | Doar unul: creator care nu e membru.                                                                                                                                                                                                   |                                                                                                                                                                              |
 | **Variabile** | Clară și contextuală (ex: `userId`, `otherUser1`, `mockLogger`)                                                                                                                                                                         | Mai simplă și uneori mai vagă (`uid`, `target`, `creatorOnly`)                                                                                                                                                                         |     
 | **Complexitate** | Mare – ideal pentru validare completă                                                                                                                                                                        | Redusă – potrivit pentru faze inițiale ale dezvoltării sau debugging rapid                                                                                                                                                                        |                                                                                                                                                                     |
+### Capturi de ecran rulare cod
+
+##### Teste scrise manual
+
+<img src="https://github.com/AlexMihai1126/ProiectTSS/blob/main/doc/initial_testing.png?raw=true" alt="A photo of my setup" width="500" height="350">
+
+##### Teste generate cu AI
+
+<img src="https://github.com/AlexMihai1126/ProiectTSS/blob/main/doc/ai_testing.png?raw=true" alt="A photo of my setup" width="500" height="350">
+
+### Interpretare și concluzii
+
+Utilizarea ChatGPT pentru generarea testelor oferă o bază solidă, dar incompletă. AI-ul reușește să creeze rapid scenarii de testare funcționale, dar:
+
+- Nu acoperă toate cazurile limită;
+
+- Nu verifică opțiuni implicite sau comportamente logice complexe;
+
+- Nu organizează testele în mod modular;
+
+- Necesită revizuire umană pentru claritate și completare.
+
+Cu toate acestea, poate fi extrem de util în fazele incipiente ale dezvoltării, economisind timp prețios.
+
+### Referințe
+
+1. OpenAI. (2024). ChatGPT (GPT-4) Model Documentation. https://platform.openai.com/docs
+
+2. Jest Testing Framework. (2025). https://jestjs.io
+
+3. Mongo Memory Server. (2025). https://github.com/nodkz/mongodb-memory-server
