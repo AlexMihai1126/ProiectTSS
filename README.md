@@ -1,4 +1,4 @@
-# Proiect testare unitară în JavaScript - Etapa 2/3
+# Proiect testare unitară în JavaScript - Etapa finală (3/3)
 
 ## Membrii echipei:
    1) Mihai Alexandru-Mario
@@ -200,7 +200,7 @@ Creează o conversaţie de test cu următoarele proprietăţi:
 
 ## Comparație cu alte aplicații similare
 
-Pentru a înțelege mai bine abordările existente, am analizat modul în care aplicații populare precum **WhatsApp**, **Telegram** sau **Discord** gestionează ștergerea unui utilizator dintr-un grup sau a unui admin.
+Pentru a înțelege mai bine abordările existente, am analizat modul în care aplicații de mesagerie populare precum **WhatsApp**, **Telegram** sau **Discord** gestionează ștergerea unui utilizator dintr-un grup sau a unui admin.
 
 ### Observații:
 
@@ -240,14 +240,13 @@ module.exports = {
 
 ### Abordarea aplicației din proiect
 
-Prin comparație, în aplicația analizată în cadrul acestui proiect, ștergerea unui utilizator implică automat curățarea următoarelor:
+Prin comparație, în codul din cadrul acestui proiect, ștergerea unui utilizator implică automat curățarea următoarelor:
 
 - **Mesaje și conversații**
-- **Conținut media asociat**
-- **Relații de prietenie**
-- **Rolul de admin**, dacă este cazul
+- **Conținut media asociat** (nu a fost scopul testării, dar există în versiunea anterioară a fișierului)
+- **Relații de prietenie** (nu a fost scopul testării, dar există în versiunea anterioară a fișierului)
 
-Această abordare oferă un plus de **confidențialitate** și **control al datelor**, în contrast cu soluțiile mai conservatoare din aplicațiile menționate, unde istoricul este păstrat chiar și după ștergerea contului.
+Această abordare oferă un plus de **confidențialitate** și **control al datelor**, în contrast cu soluțiile din aplicațiile menționate, unde istoricul este păstrat chiar și după ștergerea contului.
 
 
 ## Compararea testelor manuale vs. autogenerate cu AI 
@@ -258,7 +257,7 @@ Cu ajutorul AI-ului, am generat un fișier de testare — `removeUserFromConvers
 
 ### Tool AI folosit
 
-- ChatGPT (model GPT-4) – folosit pentru generarea automată de teste pe baza unei descrieri funcționale a metodei.
+- ChatGPT (model GPT-4o) – folosit pentru generarea automată de teste pe baza unei descrieri funcționale a metodei.
 
 - Promptul utilizat este disponibil mai jos.
 
@@ -306,16 +305,18 @@ Utilizarea ChatGPT pentru generarea testelor oferă o bază solidă, dar incompl
 
 - Nu verifică opțiuni implicite sau comportamente logice complexe;
 
-- Nu organizează testele în mod modular;
+- Nu organizează testele pe categorii;
 
-- Necesită revizuire umană pentru claritate și completare.
+- Necesită revizuire umană pentru claritate și corectitudine.
 
 Cu toate acestea, poate fi extrem de util în fazele incipiente ale dezvoltării, economisind timp prețios.
 
 ### Referințe
 
-1. OpenAI. (2024). ChatGPT (GPT-4) Model Documentation. https://platform.openai.com/docs
+1. Documentație model ChatGPT 4o. Accesat în data de 10.05.2025. [https://platform.openai.com/docs/models/gpt-4o](https://platform.openai.com/docs/models/gpt-4o)
 
-2. Jest Testing Framework. (2025). https://jestjs.io
+2. Framework de testare Jest pentru limbajul JavaScript. Accesat în data de 10.05.2025. [https://jestjs.io/docs/getting-started](https://jestjs.io/docs/getting-started)
 
-3. Mongo Memory Server. (2025). https://github.com/nodkz/mongodb-memory-server
+3. Framework pentru mutation testing Stryker (ales pentru JavaScript). Accesat în data de 10.05.2025. [https://stryker-mutator.io/docs/stryker-js/introduction/](https://stryker-mutator.io/docs/stryker-js/introduction/)
+
+4. Mongo Memory Server. Accesat în data de 10.05.2025. [https://github.com/typegoose/mongodb-memory-server](https://github.com/typegoose/mongodb-memory-server)
