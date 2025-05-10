@@ -311,6 +311,8 @@ Utilizarea ChatGPT pentru generarea testelor oferă o bază solidă, dar incompl
 
 Cu toate acestea, poate fi extrem de util în fazele incipiente ale dezvoltării, economisind timp prețios.
 
+### Videoclip rulare testare [https://youtu.be/IcdzKWefU7M](https://youtu.be/IcdzKWefU7M)
+
 ### Referințe
 
 1. Documentație model ChatGPT 4o. Accesat în data de 10.05.2025. [https://platform.openai.com/docs/models/gpt-4o](https://platform.openai.com/docs/models/gpt-4o)
